@@ -19,7 +19,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int roundNum = 4;
     [SerializeField] private float cardStackOffset = 0.1f;
 
-    private List<Card> cards = new List<Card>();
+    private List<Card> drawCards = new List<Card>();
+    private List<Card> discardCards = new List<Card>();
+    private List<Card> playerCards = new List<Card>();
+    private List<Card> opponentCards = new List<Card>();
+    private Card playerSelectedCard;
+    private Card opponentSelectedCard;
 
     [Header("Miscellaneous")]
     [SerializeField] private TextMeshProUGUI txt_PlayerScore;
@@ -42,16 +47,67 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        cards.Clear();
+        ClearAllCards();
 
         for (int i = 0; i < roundNum * 6; i++)
         {
-            Vector3 pos = drawPile.position + Vector3.up * i * cardStackOffset;
-            Card card = Instantiate(prefab_Card, pos, Quaternion.identity);
+            Card card = Instantiate(prefab_Card);
             card.Flip(false);
             card.UpdateProperties((CardType) (i / roundNum * 2));
-
-            cards.Add(card);
+            drawCards.Add(card);
         }
+
+        ShuffleCards();
+
+        for (int i = 0; i < drawCards.Count; i++)
+            drawCards[i].transform.position = drawPile.position + Vector3.up * i * cardStackOffset;
+
+        DealHands();
+    }
+
+    private void ClearAllCards()
+    {
+        foreach (Card c in drawCards) Destroy(c.gameObject);
+        foreach (Card c in discardCards) Destroy(c.gameObject);
+        foreach (Card c in playerCards) Destroy(c.gameObject);
+        foreach (Card c in opponentCards) Destroy(c.gameObject);
+
+        drawCards.Clear();
+        discardCards.Clear();
+        playerCards.Clear();
+        opponentCards.Clear();
+    }
+
+    private void ShuffleCards()
+    {
+        int n = drawCards.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = Random.Range(0, n + 1);
+            Card card = drawCards[k];
+            drawCards[k] = drawCards[n];
+            drawCards[n] = card;
+        }
+    }
+
+    private void DealHands()
+    {
+        Card card;
+
+        card = drawCards[drawCards.Count - 1];
+        card.Move(opponentHand[0].position);
+        drawCards.RemoveAt(drawCards.Count - 1);
+        opponentCards.Add(card);
+
+        card = drawCards[drawCards.Count - 1];
+        card.Move(opponentHand[1].position);
+        drawCards.RemoveAt(drawCards.Count - 1);
+        opponentCards.Add(card);
+
+        card = drawCards[drawCards.Count - 1];
+        card.Move(opponentHand[2].position);
+        drawCards.RemoveAt(drawCards.Count - 1);
+        opponentCards.Add(card);
     }
 }

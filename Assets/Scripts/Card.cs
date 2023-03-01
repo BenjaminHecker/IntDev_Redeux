@@ -52,4 +52,9 @@ public class Card : MonoBehaviour
 
         return new CardProperties();
     }
+
+    public void Move(Vector3 pos)
+    {
+        transform.position = pos;
+    }
 }
