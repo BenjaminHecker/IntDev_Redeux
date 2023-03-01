@@ -2,32 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer), typeof(BoxCollider2D))]
 public class Card : MonoBehaviour
 {
     public enum CardType { Rock, Paper, Scissors }
 
     private CardType type;
+    private SpriteRenderer sRender;
 
-    [SerializeField] private SpriteRenderer background;
-    [SerializeField] private SpriteRenderer icon;
+    [SerializeField] private Sprite back;
+    private bool faceUp = false;
 
     [System.Serializable]
     struct CardProperties
     {
         public string name;
         public CardType type;
-        public Color background;
-        public Sprite icon;
+        public Sprite sprite;
     }
     [SerializeField] private CardProperties[] cardProperties;
+
+    private void Awake()
+    {
+        sRender = GetComponent<SpriteRenderer>();
+    }
+
+    public void Flip(bool faceUp)
+    {
+        this.faceUp = faceUp;
+        UpdateSprite();
+    }
 
     public void UpdateProperties(CardType type)
     {
         this.type = type;
-        CardProperties prop = GetProperties();
+        UpdateSprite();
+    }
 
-        background.color = prop.background;
-        icon.sprite = prop.icon;
+    private void UpdateSprite()
+    {
+        sRender.sprite = (faceUp) ? GetProperties().sprite : back;
     }
 
     private CardProperties GetProperties()

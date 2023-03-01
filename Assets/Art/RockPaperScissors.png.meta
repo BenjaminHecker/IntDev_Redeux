@@ -47,7 +47,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 200
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -121,18 +121,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 200
-        height: 200
+        y: 355
+        width: 250
+        height: 355
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b38ee234417dd94429844cf856c67404
-      internalID: 1593107132
+      spriteID: 3a1d741f97863004fa963186ecc7ddf5
+      internalID: -1036061893
       vertices: []
       indices: 
       edges: []
@@ -141,19 +141,19 @@ TextureImporter:
       name: RockPaperScissors_1
       rect:
         serializedVersion: 2
-        x: 200
-        y: 0
-        width: 200
-        height: 200
+        x: 250
+        y: 355
+        width: 250
+        height: 355
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aa0844cdac4e9a243ba0bf28434e7259
-      internalID: 2039405323
+      spriteID: 66538ba52cdc32d4ba5ae50aeecd3a44
+      internalID: 370383877
       vertices: []
       indices: 
       edges: []
@@ -162,19 +162,40 @@ TextureImporter:
       name: RockPaperScissors_2
       rect:
         serializedVersion: 2
-        x: 400
+        x: 0
         y: 0
-        width: 200
-        height: 200
+        width: 250
+        height: 355
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 68d54bcd0af954f42a7cfaddb990edc3
-      internalID: 1209217855
+      spriteID: 67e5d69223014724abe3d30544c362e3
+      internalID: 1692995306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RockPaperScissors_3
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 0
+        width: 250
+        height: 355
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a89d94648c3ebd43b5d25bd7b43b121
+      internalID: -2028188937
       vertices: []
       indices: 
       edges: []
@@ -190,9 +211,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      RockPaperScissors_2: 1209217855
-      RockPaperScissors_1: 2039405323
-      RockPaperScissors_0: 1593107132
+      RockPaperScissors_2: 1692995306
+      RockPaperScissors_3: -2028188937
+      RockPaperScissors_1: 370383877
+      RockPaperScissors_0: -1036061893
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
