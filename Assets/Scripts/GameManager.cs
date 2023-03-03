@@ -52,8 +52,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < roundNum * 6; i++)
         {
             Card card = Instantiate(prefab_Card);
-            card.Flip(false);
-            card.UpdateProperties((CardType) (i / roundNum * 2));
+            card.Setup(this, false, (CardType)(i / roundNum / 2));
             drawCards.Add(card);
         }
 
@@ -93,21 +92,99 @@ public class GameManager : MonoBehaviour
 
     private void DealHands()
     {
-        Card card;
+        DrawOpponentCard(0);
+        DrawOpponentCard(1);
+        DrawOpponentCard(2);
 
-        card = drawCards[drawCards.Count - 1];
-        card.Move(opponentHand[0].position);
+        DrawPlayerCard(0);
+        DrawPlayerCard(1);
+        DrawPlayerCard(2);
+
+        foreach (Card card in playerCards)
+            card.Flip(true);
+
+        SelectOpponentCard();
+    }
+
+    private void DrawOpponentCard(int id)
+    {
+        Card card = drawCards[drawCards.Count - 1];
+        card.Move(opponentHand[id].position);
         drawCards.RemoveAt(drawCards.Count - 1);
         opponentCards.Add(card);
+    }
 
-        card = drawCards[drawCards.Count - 1];
-        card.Move(opponentHand[1].position);
+    private void DrawPlayerCard(int id)
+    {
+        Card card = drawCards[drawCards.Count - 1];
+        card.Move(playerHand[id].position);
+        card.SetInteractable(true);
         drawCards.RemoveAt(drawCards.Count - 1);
-        opponentCards.Add(card);
+        playerCards.Add(card);
+    }
 
-        card = drawCards[drawCards.Count - 1];
-        card.Move(opponentHand[2].position);
-        drawCards.RemoveAt(drawCards.Count - 1);
-        opponentCards.Add(card);
+    private void SelectOpponentCard()
+    {
+        Card card = opponentCards[Random.Range(0, opponentCards.Count)];
+        opponentSelectedCard = card;
+        card.Move(opponentSelected.position);
+    }
+
+    public void SelectPlayerCard(Card card)
+    {
+        playerSelectedCard = card;
+        card.Move(playerSelected.position);
+
+        foreach (Card c in playerCards)
+            c.SetInteractable(false);
+
+        ResolveRound();
+    }
+
+    private void ResolveRound()
+    {
+        opponentSelectedCard.Flip(true);
+
+        RoundResult result = GetRoundResult(playerSelectedCard.Type, opponentSelectedCard.Type);
+
+        if (result == RoundResult.Win)
+            playerScore++;
+        if (result == RoundResult.Lose)
+            opponentScore++;
+
+        UpdateText();
+
+        DiscardHands();
+    }
+
+    private void DiscardHands()
+    {
+        playerSelectedCard = null;
+        opponentSelectedCard = null;
+
+        foreach (Card card in playerCards)
+        {
+            discardCards.Add(card);
+            card.Move(discardPile.position);
+        }
+        foreach (Card card in opponentCards)
+        {
+            discardCards.Add(card);
+            card.Flip(true);
+            card.Move(discardPile.position);
+        }
+
+        playerCards.Clear();
+        opponentCards.Clear();
+
+        if (drawCards.Count <= 0)
+            ResetDrawPile();
+
+        DealHands();
+    }
+
+    private void ResetDrawPile()
+    {
+        
     }
 }
