@@ -114,7 +114,14 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(cardRevealDelay);
 
         foreach (Card card in playerCards)
+        {
+            card.Flip(true);
             card.SetInteractable(true);
+        }
+
+        SoundManager.PlaySound("CardThwip");
+
+        yield return new WaitForSeconds(cardRevealDelay);
 
         SelectOpponentCard();
     }
@@ -131,7 +138,6 @@ public class GameManager : MonoBehaviour
     {
         Card card = drawCards[drawCards.Count - 1];
         card.Move(playerHand[id].position);
-        card.Flip(true);
         drawCards.RemoveAt(drawCards.Count - 1);
         playerCards.Add(card);
     }
@@ -159,15 +165,22 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(cardRevealDelay);
 
         opponentSelectedCard.Flip(true);
+        SoundManager.PlaySound("CardThwip");
 
         yield return new WaitForSeconds(cardRevealDelay);
 
         RoundResult result = GetRoundResult(playerSelectedCard.Type, opponentSelectedCard.Type);
 
         if (result == RoundResult.Win)
+        {
             playerScore++;
+            SoundManager.PlaySound("Win");
+        }
         if (result == RoundResult.Lose)
+        {
             opponentScore++;
+            SoundManager.PlaySound("Lose");
+        }
 
         UpdateText();
 

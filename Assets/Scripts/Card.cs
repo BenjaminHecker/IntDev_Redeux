@@ -82,6 +82,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         moveRoutine = MoveRoutine(pos, (pos - transform.position).magnitude / moveSpeed);
         StartCoroutine(moveRoutine);
+
+        SoundManager.PlaySound("CardThwip");
     }
 
     private IEnumerator MoveRoutine(Vector3 target, float duration)
