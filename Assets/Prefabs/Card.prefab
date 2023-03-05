@@ -103,7 +103,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.5, y: 3.5}
+    oldSize: {x: 2.5, y: 3.55}
     newSize: {x: 2.5, y: 3.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d38d99a74477041bd4f403b211485e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 20
   back: {fileID: -2028188937, guid: ae168ad40360e494190a8177de8e8bc7, type: 3}
   cardProperties:
   - name: Rock

@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("Positions")]
     [SerializeField] private Transform drawPile;
     [SerializeField] private Transform discardPile;
+    [SerializeField] private Transform shuffleSpot;
     [SerializeField] private Transform playerSelected;
     [SerializeField] private Transform[] playerHand;
     [SerializeField] private Transform opponentSelected;
@@ -18,6 +19,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Card prefab_Card;
     [SerializeField] private int roundNum = 4;
     [SerializeField] private float cardStackOffset = 0.1f;
+    [SerializeField] private float cardDrawDelay = 0.2f;
+    [SerializeField] private float cardRevealDelay = 1f;
+    [SerializeField] private float cardShuffleDelay = 0.05f;
 
     private List<Card> drawCards = new List<Card>();
     private List<Card> discardCards = new List<Card>();
@@ -25,6 +29,7 @@ public class GameManager : MonoBehaviour
     private List<Card> opponentCards = new List<Card>();
     private Card playerSelectedCard;
     private Card opponentSelectedCard;
+    private int discardStackIdx = 0;
 
     [Header("Miscellaneous")]
     [SerializeField] private TextMeshProUGUI txt_PlayerScore;
@@ -61,7 +66,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < drawCards.Count; i++)
             drawCards[i].transform.position = drawPile.position + Vector3.up * i * cardStackOffset;
 
-        DealHands();
+        StartCoroutine(DealHands());
     }
 
     private void ClearAllCards()
@@ -90,18 +95,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void DealHands()
+    private IEnumerator DealHands()
     {
         DrawOpponentCard(0);
+        yield return new WaitForSeconds(cardDrawDelay);
         DrawOpponentCard(1);
+        yield return new WaitForSeconds(cardDrawDelay);
         DrawOpponentCard(2);
+        yield return new WaitForSeconds(cardDrawDelay);
 
         DrawPlayerCard(0);
+        yield return new WaitForSeconds(cardDrawDelay);
         DrawPlayerCard(1);
+        yield return new WaitForSeconds(cardDrawDelay);
         DrawPlayerCard(2);
+        yield return new WaitForSeconds(cardDrawDelay);
+
+        yield return new WaitForSeconds(cardRevealDelay);
 
         foreach (Card card in playerCards)
-            card.Flip(true);
+            card.SetInteractable(true);
 
         SelectOpponentCard();
     }
@@ -118,7 +131,7 @@ public class GameManager : MonoBehaviour
     {
         Card card = drawCards[drawCards.Count - 1];
         card.Move(playerHand[id].position);
-        card.SetInteractable(true);
+        card.Flip(true);
         drawCards.RemoveAt(drawCards.Count - 1);
         playerCards.Add(card);
     }
@@ -137,13 +150,17 @@ public class GameManager : MonoBehaviour
 
         foreach (Card c in playerCards)
             c.SetInteractable(false);
-
-        ResolveRound();
+        
+        StartCoroutine(ResolveRound());
     }
 
-    private void ResolveRound()
+    private IEnumerator ResolveRound()
     {
+        yield return new WaitForSeconds(cardRevealDelay);
+
         opponentSelectedCard.Flip(true);
+
+        yield return new WaitForSeconds(cardRevealDelay);
 
         RoundResult result = GetRoundResult(playerSelectedCard.Type, opponentSelectedCard.Type);
 
@@ -154,10 +171,12 @@ public class GameManager : MonoBehaviour
 
         UpdateText();
 
-        DiscardHands();
+        yield return new WaitForSeconds(cardRevealDelay);
+
+        StartCoroutine(DiscardHands());
     }
 
-    private void DiscardHands()
+    private IEnumerator DiscardHands()
     {
         playerSelectedCard = null;
         opponentSelectedCard = null;
@@ -165,26 +184,49 @@ public class GameManager : MonoBehaviour
         foreach (Card card in playerCards)
         {
             discardCards.Add(card);
-            card.Move(discardPile.position);
+            card.Move(discardPile.position + Vector3.up * discardStackIdx++ * cardStackOffset);
         }
         foreach (Card card in opponentCards)
         {
             discardCards.Add(card);
             card.Flip(true);
-            card.Move(discardPile.position);
+            card.Move(discardPile.position + Vector3.up * discardStackIdx++ * cardStackOffset);
         }
 
         playerCards.Clear();
         opponentCards.Clear();
 
-        if (drawCards.Count <= 0)
-            ResetDrawPile();
+        yield return new WaitForSeconds(cardRevealDelay);
 
-        DealHands();
+        if (drawCards.Count <= 0)
+            yield return ResetDrawPile();
+
+        StartCoroutine(DealHands());
     }
 
-    private void ResetDrawPile()
+    private IEnumerator ResetDrawPile()
     {
-        
+        discardStackIdx = 0;
+
+        foreach (Card card in discardCards)
+        {
+            card.Flip(false);
+            card.Move(shuffleSpot.position);
+            drawCards.Add(card);
+            yield return new WaitForSeconds(cardShuffleDelay);
+        }
+        discardCards.Clear();
+
+        yield return new WaitForSeconds(cardRevealDelay);
+
+        ShuffleCards();
+
+        for (int i = 0; i < drawCards.Count; i++)
+        {
+            drawCards[i].Move(drawPile.position + Vector3.up * i * cardStackOffset);
+            yield return new WaitForSeconds(cardShuffleDelay);
+        }
+
+        yield return new WaitForSeconds(cardRevealDelay);
     }
 }

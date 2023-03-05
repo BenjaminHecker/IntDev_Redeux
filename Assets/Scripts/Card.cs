@@ -15,6 +15,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private SpriteRenderer sRender;
     private GameManager manager;
 
+    [SerializeField] private float moveSpeed = 1f;
+    private IEnumerator moveRoutine;
+
     [SerializeField] private Sprite back;
     private bool faceUp = false;
 
@@ -74,7 +77,26 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void Move(Vector3 pos)
     {
-        transform.position = pos;
+        if (moveRoutine != null)
+            StopCoroutine(moveRoutine);
+
+        moveRoutine = MoveRoutine(pos, (pos - transform.position).magnitude / moveSpeed);
+        StartCoroutine(moveRoutine);
+    }
+
+    private IEnumerator MoveRoutine(Vector3 target, float duration)
+    {
+        Vector3 velocity = Vector3.zero;
+
+        while (true)
+        {
+            transform.position = Vector3.SmoothDamp(transform.position, target, ref velocity, duration);
+
+            if ((transform.position - target).magnitude <= 0.01f)
+                break;
+
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     public static RoundResult GetRoundResult(CardType player, CardType opponent)
